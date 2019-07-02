@@ -4,7 +4,7 @@ import TagList from './components/tag-list';
 
 import './App.sass'
 
-class App extends React.Component {
+class App extends React.PureComponent {
   constructor(props){
     super(props)
     this.myRef = React.createRef();
@@ -12,11 +12,37 @@ class App extends React.Component {
 
     state = {
       itemList: [
-        
+        {value: "I wanna go to", index: "shop"},
+        {value: "I wanna go to", index: "shop"},
+        {value: "I wanna go to", index: "shop"},
+        {value: "I wanna go to", index: "ship"}
       ],
       tagList: [
-
+        "shop",
+        "ship"
       ]
+    }
+
+    deleteItem = (id, value) => {
+      let {itemList} = this.state;
+      itemList = itemList.slice();
+      itemList = [...itemList.slice(0, id),
+                  ...itemList.slice(id + 1)];
+      this.setState({itemList: itemList}); 
+      if (!itemList.some((elem) => elem.value === value)) {
+        this.deleteTag(value);
+      }      
+    }
+
+    deleteTag = (value) => {
+      let {tagList} = this.state;
+      tagList = tagList.slice();
+      let id = tagList.indexOf(value);
+      if (id !== -1) {
+      tagList = [...tagList.slice(0, id),
+                ...tagList.slice(id + 1)];
+      this.setState({tagList: tagList});
+      }
     }
 
     addItem = (str, tag) => {      
@@ -31,6 +57,9 @@ class App extends React.Component {
     }
 
     separateText = () => {
+      if (this.myRef.current.value === '') {
+        return;
+      }
       let str = this.myRef.current.value;
       let index = str.lastIndexOf('#');      
       let item = str.slice(0, index).trim();
@@ -51,13 +80,14 @@ class App extends React.Component {
 
   render() {
     let { itemList, tagList } = this.state;
+    console.log(itemList, tagList)
     return (
       <div>        
         <div>
           <input ref={this.myRef} type="text" defaultValue={'I wanna go to #shop'}/>
           <input type='button' onClick={this.separateText} value='Add'/>
         </div> 
-        <TodoList itemList={ itemList }/>
+        <TodoList itemList={ itemList } cbDeleteItem={this.deleteItem}/>
         <TagList tagList={ tagList }/>  
       </div>
     )

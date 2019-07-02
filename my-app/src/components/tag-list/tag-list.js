@@ -2,11 +2,13 @@ import React from 'react';
 import TagListItem from '../tag-list-item';
 
 const TagList = (props) => {
-
-    let tagList = props.tagList.map((text, i) => <TagListItem key={i} text={text}/>);
+    const {tagList, cbDeleteItem } = props;
+    let showList = tagList.map((text, i) => <TagListItem cbDeleteItem={cbDeleteItem} key={i} id={i} text={text}/>);
 
     return <div>
-        {tagList}
+        <ul>
+            {showList}
+        </ul>
     </div>
 }
 
